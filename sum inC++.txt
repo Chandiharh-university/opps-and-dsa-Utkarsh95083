@@ -1,0 +1,23 @@
+#include <iostream>
+using namespace std;
+int sum(int a){
+    return a+10;
+}
+float sum(float a){
+    return a+10.54;
+}
+int sum(int a,int b){
+    return a+b;
+}
+float sum(float a,int b){
+    return a+b;
+}
+int main(){
+    int a,b;
+    float f;
+    cin>>a>>b>>f;
+    cout<<sum(a)<<"\n";
+    cout<<sum(a,b)<<"\n";
+    cout<<sum(f)<<"\n";
+    cout<<sum(f+b)<<"\n";
+}

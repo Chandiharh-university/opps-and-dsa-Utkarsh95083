@@ -1,0 +1,139 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+// Define the structure for a node 
+struct Node { 
+ int data; 
+ struct Node* leŌ;
+ struct Node* right; 
+ int height; // Height of the node for AVL balancing 
+}; 
+// FuncƟon to create a new node
+struct Node* createNode(int value) { 
+ struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); 
+ newNode->data = value; 
+ newNode->leŌ = NULL;
+ newNode->right = NULL; 
+ newNode->height = 1; // IniƟally, the height is 1 for a new node
+ return newNode; 
+} 
+// FuncƟon to get the height of a node
+int height(struct Node* node) { 
+ if (node == NULL) 
+ return 0; 
+ return node->height; 
+} 
+// FuncƟon to get the balance factor of a node
+int getBalance(struct Node* node) { 
+ if (node == NULL) 
+ return 0; 
+ return height(node->leŌ) - height(node->right); 
+} 
+// FuncƟon to perform a right rotaƟon (used for balancing)
+struct Node* rightRotate(struct Node* y) { 
+ struct Node* x = y->leŌ;
+ struct Node* T2 = x->right; 
+ // Perform rotaƟon
+ x->right = y; 
+ y->leŌ = T2;
+ // Update heights 
+ y->height = 1 + (height(y->leŌ) > height(y->right) ? height(y->leŌ) : height(y->right)); 
+ x->height = 1 + (height(x->leŌ) > height(x->right) ? height(x->leŌ) : height(x->right)); 
+ // Return the new root 
+ return x; 
+} 
+// FuncƟon to perform a leŌ rotaƟon (used for balancing)
+struct Node* leŌRotate(struct Node* x) {
+ struct Node* y = x->right; 
+ struct Node* T2 = y->leŌ;
+ // Perform rotaƟon
+ y->leŌ = x;
+ x->right = T2; 
+ // Update heights 
+ x->height = 1 + (height(x->leŌ) > height(x->right) ? height(x->leŌ) : height(x->right)); 
+ y->height = 1 + (height(y->leŌ) > height(y->right) ? height(y->leŌ) : height(y->right)); 
+ // Return the new root 
+ return y; 
+} 
+// FuncƟon to insert a node in an AVL tree and balance it
+struct Node* insertAVL(struct Node* node, int data) { 
+ if (node == NULL) 
+ return createNode(data); 
+ 
+ if (data < node->data) 
+ node->leŌ = insertAVL(node->leŌ, data);
+ else if (data > node->data) 
+ node->right = insertAVL(node->right, data); 
+ else 
+ return node; // Duplicate values are not allowed in BST 
+ // Update the height of this ancestor node 
+ node->height = 1 + (height(node->leŌ) > height(node->right) ? height(node->leŌ) : height(node->right)); 
+ // Get the balance factor to check if this node became unbalanced 
+ int balance = getBalance(node); 
+ // LeŌ LeŌ Case
+ if (balance > 1 && data < node->leŌ->data) 
+ return rightRotate(node); 
+ // Right Right Case 
+ if (balance < -1 && data > node->right->data) 
+ return leŌRotate(node);
+ // LeŌ Right Case
+ if (balance > 1 && data > node->leŌ->data) { 
+ node->leŌ = leŌRotate(node->leŌ);
+ return rightRotate(node); 
+ } 
+ // Right LeŌ Case
+ if (balance < -1 && data < node->right->data) { 
+ node->right = rightRotate(node->right); 
+ return leŌRotate(node);
+ } 
+ return node; 
+} 
+// In-order traversal to collect node values 
+void inorderTraversal(struct Node* root, int* arr, int* index) { 
+ if (root == NULL) 
+ return; 
+ inorderTraversal(root->leŌ, arr, index);
+ arr[(*index)++] = root->data; 
+ inorderTraversal(root->right, arr, index); 
+} 
+// FuncƟon to convert an unsorted binary tree into an AVL tree
+struct Node* convertToAVL(struct Node* root) { 
+ int arr[100]; // Assuming the tree has at most 100 nodes 
+ int index = 0; 
+ // Step 1: Traverse the binary tree in-order to get all the node values 
+ inorderTraversal(root, arr, &index); 
+ // Step 2: Insert the values into an AVL tree (sorted) 
+ struct Node* newRoot = NULL; 
+ for (int i = 0; i < index; i++) { 
+ newRoot = insertAVL(newRoot, arr[i]); 
+ } 
+ return newRoot; 
+} 
+// FuncƟon to perform in-order traversal and print the tree 
+void printInOrder(struct Node* root) { 
+ if (root == NULL) 
+ return; 
+ printInOrder(root->leŌ);
+ prinƞ("%d ", root->data); 
+ printInOrder(root->right); 
+} 
+int main() { 
+ // Create a binary tree (not necessarily balanced) 
+ struct Node* root = createNode(10); 
+ root->leŌ = createNode(5);
+ root->right = createNode(15); 
+ root->leŌ->leŌ = createNode(3);
+ root->leŌ->right = createNode(7); 
+ root->right->leŌ = createNode(12);
+ root->right->right = createNode(18); 
+ // Print original tree (in-order traversal) 
+ prinƞ("Original tree (In-order): "); 
+ printInOrder(root); 
+ prinƞ("\n"); 
+ // Convert the binary tree into an AVL tree 
+ struct Node* avlRoot = convertToAVL(root); 
+ // Print the AVL tree (in-order traversal) 
+ prinƞ("Converted AVL tree (In-order): "); 
+ printInOrder(avlRoot); 
+ prinƞ("\n"); 
+ return 0; 
+}

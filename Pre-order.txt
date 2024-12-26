@@ -1,0 +1,54 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+// Define the structure for a node 
+struct Node { 
+ int data; // Data of the node 
+ struct Node* leŌ; // Pointer to the leŌ child node
+ struct Node* right; // Pointer to the right child node 
+}; 
+// FuncƟon to create a new node
+struct Node* createNode(int value) { 
+ struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); // Allocate memory for the new node 
+ newNode->data = value; // Set the node's data 
+ newNode->leŌ = NULL; // IniƟalize leŌ child as NULL
+ newNode->right = NULL; // IniƟalize right child as NULL
+ return newNode; 
+} 
+// Pre-order traversal (Root, LeŌ, Right)
+void preorderTraversal(struct Node* root) { 
+ if (root == NULL) { 
+ return; 
+ } 
+ 
+ // Visit the root node 
+ prinƞ("%d ", root->data); 
+ 
+ // Traverse the leŌ subtree
+ preorderTraversal(root->leŌ);
+ 
+ // Traverse the right subtree 
+ preorderTraversal(root->right); 
+} 
+int main() { 
+ // Create the root node 
+ struct Node* root = createNode(10); 
+ 
+ // Add children to the root node 
+ root->leŌ = createNode(5);
+ root->right = createNode(15); 
+ 
+ // Add children to the leŌ node
+ root->leŌ->leŌ = createNode(3);
+ root->leŌ->right = createNode(7); 
+ 
+ // Add children to the right node 
+ root->right->leŌ = createNode(12);
+ root->right->right = createNode(18); 
+ 
+ // Perform pre-order traversal and print the nodes 
+ prinƞ("Pre-order Traversal: "); 
+ preorderTraversal(root); 
+ prinƞ("\n"); 
+ 
+ return 0; 
+}

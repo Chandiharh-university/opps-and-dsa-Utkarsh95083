@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include <queue>
+#include <string>
+class Solution {
+public:
+    std::vector<std::vector<std::string>> findLadders(std::string beginWord, std::string endWord, std::vector<std::string>& wordList) {
+        std::unordered_set<std::string> wordSet(wordList.begin(), wordList.end());
+        std::unordered_map<std::string, std::vector<std::string>> graph;
+        std::vector<std::vector<std::string>> result;
+        if (wordSet.find(endWord) == wordSet.end()) {
+            return result;
+        }
+        std::unordered_map<std::string, int> distance;
+        std::queue<std::string> q;
+        q.push(beginWord);
+        distance[beginWord] = 0;
+        bool foundEndWord = false;
+        while (!q.empty() && !foundEndWord) {
+            int size = q.size();
+            std::unordered_set<std::string> visitedInLevel;
+            for (int i = 0; i < size; ++i) {
+                std::string currentWord = q.front();
+                q.pop();
+                for (int j = 0; j < currentWord.size(); ++j) {
+                    std::string nextWord = currentWord;
+                    for (char c = 'a'; c <= 'z'; ++c) {
+                        nextWord[j] = c;
+                        if (wordSet.find(nextWord) != wordSet.end() && distance.find(nextWord) == distance.end()) {
+                            visitedInLevel.insert(nextWord);
+                            distance[nextWord] = distance[currentWord] + 1;
+                            q.push(nextWord);
+                            if (nextWord == endWord) {
+                                foundEndWord = true;
+                            }
+                        }
+                    }
+                }
+            }
+            for (const auto& word : visitedInLevel) {
+                wordSet.erase(word);
+            }
+        }
+        std::vector<std::string> path;
+        path.push_back(beginWord);
+        dfs(beginWord, endWord, graph, path, result);
+        return result;
+    }
+private:
+    void dfs(const std::string& currentWord, const std::string& endWord, std::unordered_map<std::string, std::vector<std::string>>& graph, std::vector<std::string>& path, std::vector<std::vector<std::string>>& result) {
+        if (currentWord == endWord) {
+            result.push_back(path);
+            return;
+        }
+        for (const std::string& neighbor : graph[currentWord]) {
+            path.push_back(neighbor);
+            dfs(neighbor, endWord, graph, path, result);
+            path.pop_back();
+        }
+    }
+};
+int main() {
+    Solution solution;
+    std::string beginWord = "hit";
+    std::string endWord = "cog";
+    std::vector<std::string> wordList = {"hot", "dot", "dog", "lot", "log", "cog"};
+    std::vector<std::vector<std::string>> result = solution.findLadders(beginWord, endWord, wordList);
+    std::cout << "All shortest transformation sequences:\n";
+    for (const auto& path : result) {
+        for (const auto& word : path) {
+            std::cout << word << " ";
+        }
+        std::cout << "\n";
+    }
+    return 0;
+}

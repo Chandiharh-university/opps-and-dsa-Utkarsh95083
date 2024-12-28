@@ -1,0 +1,33 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Solution {
+public:
+    // Helper function to perform DFS and find paths
+    void dfs(TreeNode* node, std::string path, std::vector<std::string>& paths) {
+        if (!node) return;
+
+        // Add the current node's value to the path
+        if (!path.empty()) path += "->";
+        path += std::to_string(node->val);
+
+        // If the node is a leaf, add the path to the result
+        if (!node->left && !node->right) {
+            paths.push_back(path);
+            return;
+        }
+
+        // Continue DFS on left and right children
+        dfs(node->left, path, paths);
+        dfs(node->right, path, paths);
+    }
+
+    // Main function to find all root-to-leaf paths
+    std::vector<std::string> binaryTreePaths(TreeNode* root) {
+        std::vector<std::string> paths;
+        if (!root) return paths;
+        dfs(root, "", paths);
+        return paths;
+    }
+};

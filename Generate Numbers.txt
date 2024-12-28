@@ -1,0 +1,33 @@
+#include <iostream>
+#include <vector>
+void generateNumbersWithSum(int target, int start, std::vector<int>& current, std::vector<std::vector<int>>& results) {
+    if (target == 0) {
+        results.push_back(current);
+        return;
+    }
+    for (int i = start; i <= target; ++i) {
+        current.push_back(i);
+        generateNumbersWithSum(target - i, i, current, results);
+        current.pop_back(); 
+    }
+}
+void printResults(const std::vector<std::vector<int>>& results) {
+    for (const auto& combination : results) {
+        std::cout << "{ ";
+        for (int num : combination) {
+            std::cout << num << " ";
+        }
+        std::cout << "}\n";
+    }
+}
+int main() {
+    int target;
+    std::cout << "Enter the target sum: ";
+    std::cin >> target;
+    std::vector<std::vector<int>> results;
+    std::vector<int> current;
+    generateNumbersWithSum(target, 1, current, results);
+    std::cout << "Combinations of numbers that sum up to " << target << ":\n";
+    printResults(results);
+    return 0;
+}
